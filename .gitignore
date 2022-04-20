@@ -1,0 +1,6 @@
+__pycache__
+audio/*
+facebook-audio/*
+stt-venv
+
+test-sanic-service.ipynb

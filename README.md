@@ -9,11 +9,6 @@ contains code for:
 contain sanic app that serves speech2text model:
 - `app.py` serves nguyenvulebinh/wav2vec-base-vietnamese-250h model
 - Before running sanic app:
-  - clone model from huggingface: (possibly have to [install git-lfs](https://stackoverflow.com/a/48734334/12992413) first)
-    >```
-    >git lfs install
-    >git clone https://huggingface.co/nguyenvulebinh/wav2vec2-base-vietnamese-250h
-    >```
   - create folders: audio/, facebook-audio/ to store audio downloaded from audio channel (here facebook), and chunks from splitting the audio
 
 To host these sanic services on host machine, execute following command:

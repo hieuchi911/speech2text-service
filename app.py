@@ -14,8 +14,8 @@ app = Sanic("STT-Server")
 @app.before_server_start
 async def load_model(app):
     global AI_MODEL, PROCESSOR
-    PROCESSOR = Wav2Vec2Processor.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h")
-    AI_MODEL = Wav2Vec2ForCTC.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h")
+    PROCESSOR = Wav2Vec2Processor.from_pretrained("models/wav2vec2-base-vietnamese-250h")
+    AI_MODEL = Wav2Vec2ForCTC.from_pretrained("models/wav2vec2-base-vietnamese-250h")
 
 @app.route('/to-text', methods=['POST'])
 async def speech_to_text(request):

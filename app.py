@@ -24,7 +24,7 @@ async def speech_to_text(request):
     # Retreive audio file (from external db?)
     url = request.json['url']
     uid = request.json['uid']
-    
+
     received_file = f'facebook-audio/output_{uid}.mp4'
     wav_file =  f'facebook-audio/output_{uid}.wav'
 

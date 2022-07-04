@@ -14,8 +14,10 @@ app = Sanic("STT-Server")
 @app.before_server_start
 async def load_model(app):
     global AI_MODEL, PROCESSOR
-    PROCESSOR = Wav2Vec2Processor.from_pretrained("models/wav2vec2-base-vietnamese-250h")
-    AI_MODEL = Wav2Vec2ForCTC.from_pretrained("models/wav2vec2-base-vietnamese-250h")
+    PROCESSOR = Wav2Vec2Processor.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h",
+                                                cache_dir="models/wav2vec2-base-vietnamese-250h")
+    AI_MODEL = Wav2Vec2ForCTC.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h",
+                                                cache_dir="models/wav2vec2-base-vietnamese-250h")
 
 @app.route('/to-text', methods=['POST'])
 async def speech_to_text(request):
@@ -24,7 +26,7 @@ async def speech_to_text(request):
     # Retreive audio file (from external db?)
     url = request.json['url']
     uid = request.json['uid']
-
+    
     received_file = f'facebook-audio/output_{uid}.mp4'
     wav_file =  f'facebook-audio/output_{uid}.wav'
 

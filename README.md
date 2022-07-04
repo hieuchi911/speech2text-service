@@ -3,13 +3,13 @@ Here lives Speech to text service for rasa chatbot at CT Group
 
 ## I. Notebook `test-sanic-service.ipynb`:
 contains code for:
-- testing sanic app that serve speech2text.
+- testing sanic app that serve speech2text model
 
 ## II. Other python files:
 contain sanic app that serves speech2text model:
 - `app.py` serves nguyenvulebinh/wav2vec-base-vietnamese-250h model
-- Before running sanic app, preparation steps should be made:
-  - clone model from huggingfacethese:
+- Before running sanic app:
+  - clone model from huggingface: (possibly have to [install git-lfs](https://stackoverflow.com/a/48734334/12992413) first)
     >```
     >git lfs install
     >git clone https://huggingface.co/nguyenvulebinh/wav2vec2-base-vietnamese-250h
@@ -23,26 +23,27 @@ To host these sanic services on host machine, execute following command:
 
 ## III. Docker:
 - dockerfile in this repo builds docker image that holds environment (requirements.txt) runnable for speech2text service
-- docker image: hieuchi911/speech2text-service.
-- 3 files are needed to build this image: dockerfile, .dockerignore and `requirements.txt`; and `models/` folder that store models cloned from huggingface
-- to run docker services for translate service:
+- docker image: hieuchi911/speech2text-service:without-ckpts
+- 2 files are needed to build this image: dockerfile, and `requirements.txt`
+- to run the docker service:
+  - create folders: audio/, facebook-audio/ to store audio downloaded from audio channel (here facebook), and chunks from splitting the audio
   - run the image, binding the container's working directory with directory containing sanic app file (e.g in this repo, `app.py`).
   - run sanic service in the container (either via `CMD` in dockerfile or provide command at `container run`)
   - these steps is shown in following example:
     >```
-    > sudo docker run --name en-vi-translate -p 8001:8000 -v "./actions/Translate-Service/:/python-docker/" hieuchi911/open-domain-kit python -m sanic app:app -H 0.0.0.0 -p 8000
+    > sudo docker run --name speech2text-service -p 8001:8000 -v "$(pwd):/python-docker/" hieuchi911/speech2text-service:without-ckpts python -m sanic app:app -H 0.0.0.0 -p 8000
     >```
     ,where:
-    - `-v "./actions/Translate-Service/:/python-docker/"` maps host machine's directory that stores sanic app and `models/` folder (`./actions/Translate-Service/`) with the container's working directory (`/python-docker/`)
+    - `-v "$(pwd)/:/python-docker/"` maps host machine's directory that stores sanic app (`$(pwd)` i.e current folder) with the container's working directory (`/python-docker/`)
     - `python -m sanic app:app -H 0.0.0.0 -p 8000` is the command that run sanic service to listen at port 8000 in the container at container startup. This command is optional since the defined dockerfile already defines this at `CMD` instruction, port specified is 5351 instead of 8000 (the python command in dockerfile wont run since it's overwritten by the python command defined at `docker run`, according to https://docs.docker.com/engine/reference/run/#cmd-default-command-or-options)
     - `-p 8001:8000` maps port `8000` in container to port `8001` in local machine, so requests from outside should be sent to port `8001`
   - Example above corresponds to following docker-compose service block:
     >```
-    >en-vi-translate:
-    >    image: "hieuchi911/open-domain-kit:latest"
+    >speech2text-service:
+    >    image: "hieuchi911/speech2text-service:without-ckpts"
     >    expose:
     >       - 8001
     >    volumes:
-    >       - ./actions/Translate-Service:/python-docker
+    >       - $(pwd):/python-docker
     >    command: ["python", "-m", "sanic", "app:app", "-H", "0.0.0.0", "-p", "8000"]
     >```
